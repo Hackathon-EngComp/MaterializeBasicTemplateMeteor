@@ -8,6 +8,7 @@ if (Meteor.isClient) {
 	var cont = 0;
 	var totalConvenios = 0;
 	var uf = '';
+
 	Template.home.onRendered(function(){
 	    $('select').material_select();
 	     	
@@ -40,7 +41,7 @@ if (Meteor.isClient) {
 				}
 				$("#result").append("<p>Valor total de convênios: "+converteFloatMoeda(valorTotalConvenios)+"</p>");
 				$(".progress").hide();
-				$('select').show();
+				$('select').material_select();
 			});
 		}
 	});
@@ -108,10 +109,10 @@ if (Meteor.isClient) {
 		offset = 0;
 		valorTotalConvenios = .0;
 		cont = 0;
-		totalConvenios = 0;
-		$("#result").html("");
 		uf = $('select').val();
-		$('select').hide();			
+		$('select').material_select('destroy');
+		$("#result").html("");
 		$(".progress").show();
+
 	}
 }
