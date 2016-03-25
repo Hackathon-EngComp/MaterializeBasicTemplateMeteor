@@ -17,29 +17,37 @@ if (Meteor.isClient) {
 	Template.home.events({
 		'change select': function () {
 			prepararTela();
+			console.log('conectando...');
+			$("#result").html("<p>Conectando-se à http://api.convenios.gov.br/siconv/v1/consulta/convenios.json</p>");
 
 			$.getJSON("http://api.convenios.gov.br/siconv/v1/consulta/convenios.json?uf="+uf, function(data){
+				console.log('conectado');
+				
 				totalConvenios = data.metadados.total_registros;
-				$("#result").append("<p>Quantidade Total de convênios: "+totalConvenios+"</p>");
+				$("#result").html("<p>Quantidade Total de convênios: "+totalConvenios+"</p>");
 				convenios.push(data.convenios);
 
 				if(totalConvenios > 500){
 					while (offset < totalConvenios) {
 						offset += 500;
 						
+						$("#valor").html("<p>Obtendo mais dados</p>");
 						allConvenios = getRestoConvenios(uf, offset);
 						var data = $.parseJSON(allConvenios);
+						console.log(data);
 						convenios.push(data.convenios);
 
 						for (var i = 0; i < convenios.length; i++) {
 							for (var j = 0; j < convenios[i].length; j++) {
 								valorTotalConvenios += parseFloat(convenios[i][j].valor_global);
 								cont++;
+								$("#valor").html("<p>(em processo...)</p><p id='valor'>Valor total de convênios: "+converteFloatMoeda(valorTotalConvenios)+"</p>");
+
 							}
 						}
 					}
 				}
-				$("#result").append("<p>Valor total de convênios: "+converteFloatMoeda(valorTotalConvenios)+"</p>");
+				$("#valor").html("<p>Valor total de convênios: "+converteFloatMoeda(valorTotalConvenios)+"</p>");
 				$(".progress").hide();
 				$('select').material_select();
 			});
@@ -112,6 +120,7 @@ if (Meteor.isClient) {
 		uf = $('select').val();
 		$('select').material_select('destroy');
 		$("#result").html("");
+		$("#valor").html("");
 		$(".progress").show();
 
 	}
