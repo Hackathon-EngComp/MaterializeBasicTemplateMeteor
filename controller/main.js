@@ -5,7 +5,6 @@ if (Meteor.isClient) {
 	var allConvenios = new Array();
 	var offset = 0;
 	var valorTotalConvenios = .0;
-	var cont = 0;
 	var totalConvenios = 0;
 	var uf = '';
 
@@ -15,7 +14,7 @@ if (Meteor.isClient) {
 	  });
 
 	Template.home.events({
-		'change select': function () {
+		'change #selectEstado': function () {
 			prepararTela();
 			console.log('conectando...');
 			$("#result").html("<p>Conectando-se à http://api.convenios.gov.br/siconv/v1/consulta/convenios.json</p>");
@@ -31,11 +30,11 @@ if (Meteor.isClient) {
 					while (offset < totalConvenios) {
 						offset += 500;
 						
-						$("#valor").html("<p>Obtendo mais dados</p>");
+						$("#valor").html("<p>Obtendo dados financeiros...</p>");
 						allConvenios = getRestoConvenios(uf, offset);
 						var data = $.parseJSON(allConvenios);
-						console.log(data);
 						convenios.push(data.convenios);
+						var cont = 0;
 
 						for (var i = 0; i < convenios.length; i++) {
 							for (var j = 0; j < convenios[i].length; j++) {
@@ -47,12 +46,43 @@ if (Meteor.isClient) {
 						}
 					}
 				}
+				createSelectAno();
+				Session.set('convenios', convenios);
+
 				$("#valor").html("<p>Valor total de convênios: "+converteFloatMoeda(valorTotalConvenios)+"</p>");
 				$(".progress").hide();
 				$('select').material_select();
 			});
+		},
+
+		'change #selectAno': function(){
+			var ano = parseInt($("#selectAno").val());
+			//var conveniosPorAno = new Array();
+			var dataInicioVigencia = 0;
+			totalConvenios = 0;
+			valorTotalConvenios = 0;
+			convenios = Session.get('convenios');
+			console.log(convenios);
+			for(var i in convenios){
+				for (var j in convenios[i]){
+					dataInicioVigencia = getAno(convenios[i][j].data_inicio_vigencia);
+					if (dataInicioVigencia === ano) {
+						console.log(dataInicioVigencia);
+						//conveniosPorAno.push(convenios[i][j]);
+						valorTotalConvenios += parseFloat(convenios[i][j].valor_global);
+						totalConvenios++;
+					}					
+				}	
+			}
+			$("#result").html("<p>Quantidade Total de convênios: "+totalConvenios+"</p>");
+			$("#valor").html('<p>valor total para '+ano+': '+converteFloatMoeda(valorTotalConvenios)+'</p>')
+			// console.log(conveniosPorAno);
 		}
 	});
+
+	function getAno(string){
+		return parseInt(string.substr(0,4));
+	}
 
 	function getRestoConvenios(uf, offset){
 		var value= $.ajax({ 
@@ -62,8 +92,8 @@ if (Meteor.isClient) {
 		    return value;
 	}
 
-	function returnConvenios(Convenios){
-		return Convenios;
+	function createSelectAno(){
+		$('#ano').html('<select name="ano" id="selectAno"><option value="" disabled selected="selected">Selecione o ano</option><option value="2008">2008</option><option value="2009">2009</option><option value="2010">2010</option><option value="2011">2011</option><option value="2012">2012</option><option value="2013">2013</option><option value="2014">2014</option><option value="2015">2015</option><option value="2016">2016</option></select>');
 	}
 
 	function converteFloatMoeda(valor){
