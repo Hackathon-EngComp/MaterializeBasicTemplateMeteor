@@ -1,12 +1,37 @@
 <template name="navHome">
-	<ul class="side-nav" id="slide-out">
-      <li><a href="template 2" class="linkmenu">template 2</a></li>
-      <li><a href="/" class="linkmenu">home</a></li>
-    </ul>
-	<ul class="left hide-on-med-and-down">
-      <li><a href="template2" class="linkmenu">template 2</a></li>
-      <li><a href="/" class="linkmenu">home</a></li>
+
+	<ul class="side-nav">
+		<li><a href="login" class="linkmenu">Login</a></li>
 	</ul>
+
+	<ul class="left hide-on-med-and-down">
+		<li><a href="login" class="linkmenu">Login</a></li>
+	</ul>
+
+	{{#if currentUser}}
+		<ul class="side-nav" id="slide-out">
+	      <li><a href="template 2" class="linkmenu">template 2</a></li>
+	      <li><a href="/" class="linkmenu">home</a></li>
+	    </ul>
+		<ul class="left hide-on-med-and-down">
+	      <li><a href="template2" class="linkmenu">template 2</a></li>
+	      <li><a href="/home" class="linkmenu">home</a></li>
+		</ul>
+	{{else}}
+		<ul class="side-nav">
+			<li><a href="AboutUs" class="linkmenu">Sobre nós</a></li>
+			<li><a href="AboutSystem" class="linkmenu">Sobre o sistema</a></li>
+			<li><a href="AboutSystem" class="linkmenu">Desenvolva</a></li>
+			<li><a href="licenca" class="linkmenu">Licença</a></li>
+		</ul>
+		<ul class="left hide-on-med-and-down">
+			<li><a href="AboutUs" class="linkmenu">Sobre nós</a></li>
+			<li><a href="AboutSystem" class="linkmenu">Sobre o sistema</a></li>
+			<li><a href="desenvolva" class="linkmenu">Desenvolva</a></li>
+			<li><a href="licenca" class="linkmenu">Licença</a></li>
+		</ul>
+	{{/if}}
+
 </template>
 
 
